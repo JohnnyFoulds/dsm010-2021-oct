@@ -65,3 +65,5 @@ hadoop fs -cat cw1_sample/part-00000
 ## Web References
 
 - [Hadoop Streaming](https://hadoop.apache.org/docs/r1.2.1/streaming.html)
+- [Calculating variance and mean with MapReduce (Python)](https://thedeadbeef.wordpress.com/2010/06/16/calculating-variance-and-mean-with-mapreduce-python/)
+- [mapreduce example for calculating standard deviation and median on a sample data](https://timepasstechies.com/map-reduce-example-sd-median/)

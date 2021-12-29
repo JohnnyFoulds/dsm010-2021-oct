@@ -27,3 +27,41 @@ cd ~/code/dsm010-2021-oct/
 git lfs install
 git lfs track "*.txt"
 ```
+
+## Hadoop
+
+### Local Test
+
+```bash
+chmod +x mapper.py reducer.py
+cat data/raw/sample.txt  | ./mapper.py | sort | ./reducer.py
+```
+
+Upload a sample file to the Hadoop File System.
+
+```bash
+hadoop fs -mkdir dsm010
+hadoop fs -put ~/code/dsm010-2021-oct/coursework_01/data/raw/sample.txt dsm010
+hadoop fs -ls dsm010
+```
+
+```bash
+# delete existing output
+hadoop fs -rm -r cw1_sample
+
+# execute the job
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.3.0.jar \
+    -input dsm010/sample.txt \
+    -output cw1_sample \
+    -file mapper.py \
+    -mapper mapper.py \
+    -file reducer.py \
+    -reducer reducer.py
+
+# show the output
+hadoop fs -cat cw1_sample/part-00000
+```
+
+## Web References
+
+- [Hadoop Streaming](https://hadoop.apache.org/docs/r1.2.1/streaming.html)

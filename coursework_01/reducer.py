@@ -4,7 +4,7 @@ import sys
 
 def main():
     reducer = Reducer()
-    reducer.reduce_input(sys.stdin, population=False)
+    reducer.reduce_input(sys.stdin, population=True)
 
 class ReducerValues():
     """

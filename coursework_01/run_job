@@ -1,0 +1,16 @@
+#/bin/bash
+
+# delete existing output
+hadoop fs -rm -r cw1_output
+
+# execute the job
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.3.0.jar \
+    -input $1 \
+    -output cw1_output \
+    -file mapper.py \
+    -mapper mapper.py \
+    -file reducer.py \
+    -reducer reducer.py
+
+# show the output
+hadoop fs -cat cw1_output/part-00000

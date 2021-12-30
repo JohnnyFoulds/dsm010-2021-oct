@@ -45,6 +45,7 @@ hadoop fs -put ~/code/dsm010-2021-oct/coursework_01/data/raw/sample.txt dsm010
 hadoop fs -ls dsm010
 ```
 
+### Execute Sample Job
 ```bash
 # delete existing output
 hadoop fs -rm -r cw1_sample

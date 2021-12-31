@@ -6,6 +6,12 @@ conda init bash
 conda activate dsm010
 ```
 
+## Install Bash kernel
+```
+pip install bash_kernel
+python -m bash_kernel.install
+```
+
 ### Git LFS
 
 ```bash

@@ -7,10 +7,12 @@ conda activate dsm010
 ```
 
 ## Install Bash kernel
+
 ```
 pip install bash_kernel
 python -m bash_kernel.install
 ```
+- [http://slhogle.github.io/2017/bash_jupyter_notebook/](http://slhogle.github.io/2017/bash_jupyter_notebook/)
 
 ### Git LFS
 

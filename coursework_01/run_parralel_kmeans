@@ -1,0 +1,113 @@
+%%bash
+#!/bin/bash
+
+# range to use for k
+k_start=2
+k_end=50
+
+# the path to the vectors and dictionary
+path_vectors=dsm010/vodacom-corpus-vectors/tf-vectors
+path_dictionary=dsm010/vodacom-corpus-vectors/dictionary.file-*
+
+# the output base path for the clusters and the result local output path
+path_hdfs_base=hdfs://lena/user/jfoul001/
+path_clusters_base=dsm010/vodacom-corpus-kmeans
+path_temp_centroids="${path_clusters_base}/temp-centroids"
+path_results_base=~/code/dsm010-2021-oct/coursework_01/data/output/vodacom-corpus-clusters-more
+
+# the distance metric to use
+distance_metrics=("org.apache.mahout.common.distance.CosineDistanceMeasure" "org.apache.mahout.common.distance.EuclideanDistanceMeasure" "org.apache.mahout.common.distance.SquaredEuclideanDistanceMeasure" "org.apache.mahout.common.distance.ManhattanDistanceMeasure")
+
+# --- clustering function
+perform_cluster() {
+    # if this value is true only the cluster dump will 
+    local only_dump=$2
+    
+    # get k with a leading zero if required
+    local k=$1
+    local k_padded=$(printf %02d $k)
+
+    # set the output path for the clusters
+    local path_clusters="${path_clusters_base}/${distance_name}/${k_padded}"
+    echo "---- K: $k_padded -- $path_clusters"
+
+    # the option exist to only perform the dump operation since paths in ClusterDumper.java is hardcoded to `tmp/representative` and cannot be run in parralel
+    if $only_dump ; then
+      # set the path for output
+      local path_final_clusters=`hadoop fs -ls -d -C "${path_clusters}/clusters-*-final"`
+      local path_clusterpoints="${path_clusters}/clusteredPoints"
+      local path_results="${path_results_base}/${distance_name}/${k_padded}.txt"
+
+      # output the cluster results
+      mahout clusterdump -dt sequencefile \
+        -d $path_dictionary \
+        -i $path_final_clusters  \
+        -o $path_results \
+        -of TEXT \
+        -b 100 \
+        -p $path_clusterpoints \
+        -dm $distance_metric \
+        -n 20 --evaluate
+    else
+      # make a copy of the centroids to allow parallel execution
+      local path_current_centroids="${path_temp_centroids}/${k_padded}"
+      hadoop fs -mkdir $path_current_centroids
+      hadoop fs -cp -d $path_centroids $path_current_centroids    
+      
+      # # perform the kmeans clustering
+      mahout kmeans \
+        -i $path_vectors \
+        -c $path_current_centroids \
+        -o "${path_hdfs_base}${path_clusters}" \
+        -ow \
+        -dm $distance_metric \
+        -cl -cd 0.1 -ow -x 20 \
+        -k $k
+
+      # delete the current centroids folder
+      hadoop fs -rm -r $path_current_centroids
+    fi
+}
+
+# --- main
+for distance_metric in "${distance_metrics[@]}"
+do
+  echo "--- Distance Metric: $distance_metric"
+
+    # perform the canopy clustering
+    distance_name=${distance_metric##*.}
+    path_centroids=dsm010/vodacom-corpus-canopy-centroids/${distance_name}
+
+    mahout canopy \
+      -i $path_vectors \
+      -ow \
+      -o $path_centroids \
+      -dm $distance_metric \
+      -t1 0.5 \
+      -t2 0.3
+
+  ## -- perform k-means clustering --- ##
+  # create the temporary centroids folder
+  echo "Creating: ${path_temp_centroids}"
+  hadoop fs -mkdir $path_temp_centroids
+
+  for ((k = $k_start; k <= $k_end; k++))
+  do
+    perform_cluster $k false &
+
+    # limit to 10 parralel jobs
+    if ((k % 10  == 0)); then
+      wait
+    fi
+  done
+  # delete the temp centroids folder
+  wait
+  echo "Deleting: ${path_temp_centroids}"
+  hadoop fs -rm -r $path_temp_centroids
+
+  ## -- perform cluster dumps --- ##
+  for ((k = $k_start; k <= $k_end; k++))
+  do
+    perform_cluster $k true
+  done
+done

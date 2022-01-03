@@ -88,7 +88,7 @@ class ReducerValues():
         mean = self.sum / float(self.n)
 
         # print the output
-        print('%s,%d,%d,%.6f,%.1f,%.6f' % (
+        print('%s,"%d,%d,%.6f,%.1f,%.6f"' % (
             self.day, 
             self.max, 
             self.min,

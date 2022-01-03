@@ -3,7 +3,7 @@
 
 # range to use for k
 k_start=2
-k_end=50
+k_end=100
 
 # the path to the vectors and dictionary
 path_vectors=dsm010/vodacom-corpus-vectors/tf-vectors
@@ -13,7 +13,7 @@ path_dictionary=dsm010/vodacom-corpus-vectors/dictionary.file-*
 path_hdfs_base=hdfs://lena/user/jfoul001/
 path_clusters_base=dsm010/vodacom-corpus-kmeans
 path_temp_centroids="${path_clusters_base}/temp-centroids"
-path_results_base=~/code/dsm010-2021-oct/coursework_01/data/output/vodacom-corpus-clusters-more
+path_results_base=~/code/dsm010-2021-oct/coursework_01/data/output/vodacom-corpus-larger
 
 # the distance metric to use
 distance_metrics=("org.apache.mahout.common.distance.CosineDistanceMeasure" "org.apache.mahout.common.distance.EuclideanDistanceMeasure" "org.apache.mahout.common.distance.SquaredEuclideanDistanceMeasure" "org.apache.mahout.common.distance.ManhattanDistanceMeasure")

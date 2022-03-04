@@ -1,0 +1,6 @@
+#!/bin/bash
+
+FILE_NAME="/data/$(date +"%Y%m%dT%H%M").csv.gz"
+ssh root@gargoyle "/root/bandwidth" | gzip > $FILE_NAME
+
+echo $FILE_NAME

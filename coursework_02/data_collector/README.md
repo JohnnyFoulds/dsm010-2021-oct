@@ -27,7 +27,7 @@ ssh root@gargoyle "/root/bandwidth"
 ### Build
 
 ```bash
-docker build -t foulds/bandwidth
+docker build -t foulds/bandwidth .
 ```
 
 ### Run

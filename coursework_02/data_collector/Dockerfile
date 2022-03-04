@@ -7,6 +7,9 @@ COPY ssh/id_rsa /root/.ssh/id_rsa
 COPY ssh/id_rsa.pub /root/.ssh/id_rsa.pub
 COPY ssh/known_hosts /root/.ssh/known_hosts
 
+RUN chmod 600 /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa.pub
+
 # copy the bandwidth collector script
 COPY bandwidth-collector /root/bandwidth-collector
 RUN chmod 0744 /root/bandwidth-collector

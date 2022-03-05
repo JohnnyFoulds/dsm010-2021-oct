@@ -36,6 +36,12 @@ docker build -t foulds/bandwidth .
 docker run --rm -t -i -v ${PWD}/data:/data foulds/bandwidth
 ```
 
+## Copy Data Files Locally
+
+```bash
+scp -r johnny@trade-server:bandwidth_data/ .
+```
+
 ## Web References
 
 - [How to run a cron job inside a docker container?](https://stackoverflow.com/questions/37458287/how-to-run-a-cron-job-inside-a-docker-container)
